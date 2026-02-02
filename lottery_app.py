@@ -101,8 +101,7 @@ class LotteryApp:
         # Generate initial numbers
         self.generate_numbers()
 
-    def generate_lottery_number(self):
-        first_digit = random.randint(1, 5)
+    def generate_lottery_number(self, first_digit):
         remaining_digits = [random.randint(0, 9) for _ in range(6)]
         return str(first_digit) + ''.join(map(str, remaining_digits))
 
@@ -114,21 +113,23 @@ class LotteryApp:
         for widget in self.results_container.winfo_children():
             widget.destroy()
 
-        # Generate new numbers
+        # Generate new numbers with unique first digits (sorted ascending)
         count = self.count_var.get()
+        first_digits = sorted(random.sample([1, 2, 3, 4, 5], count))
+
         for i in range(count):
-            number = self.generate_lottery_number()
-            formatted = f"  {number[0]}  -  {number[1:4]}  -  {number[4:]}"
+            number = self.generate_lottery_number(first_digits[i])
+            formatted = f"  {number[0]}조  -  {number[1:4]}  -  {number[4:]}"
 
             row = tk.Frame(self.results_container, bg="#16213e")
             row.pack(fill=tk.X, pady=4)
 
-            num_label = tk.Label(row, text=f"#{i+1}",
-                                 font=("Segoe UI", 12),
-                                 fg="#888", bg="#16213e", width=4)
+            num_label = tk.Label(row, text=f"{number[0]}조",
+                                 font=("Segoe UI", 14, "bold"),
+                                 fg="#e94560", bg="#16213e", width=4)
             num_label.pack(side=tk.LEFT)
 
-            value_label = tk.Label(row, text=formatted,
+            value_label = tk.Label(row, text=f"  {number[1:4]}  -  {number[4:]}",
                                    font=("Consolas", 16, "bold"),
                                    fg="#00d9ff", bg="#0f3460",
                                    padx=20, pady=8)
